@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import { GlobalContext } from '../context/GlobalState'
+import { numberWithCommas } from '../utils/format';
 
 const Transaction = ({ transaction }) => {
 	const { deleteTransaction } = useContext(GlobalContext);
@@ -13,7 +14,7 @@ const Transaction = ({ transaction }) => {
 		<>
 			<div className="right floated content">
 				<button
-					onClick={() => deleteTransaction(transaction.id)}
+					onClick={() => deleteTransaction(transaction._id)}
 					className="ui red labeled icon button"
 				>
 				<i className="trash icon"></i>
@@ -24,7 +25,7 @@ const Transaction = ({ transaction }) => {
 				<div className="ui tiny header">
 					{transaction.text}
 				</div>
-				<div style={moneyStyle}>{transaction.amount < 0 ? '-' : '+'}${Math.abs(transaction.amount)}</div>
+				<div style={moneyStyle}>{numberWithCommas(transaction.amount)}</div>
 			</div>
 			
 		</>
