@@ -8,6 +8,7 @@
 /client/.pnp
 .pnp.js
 /server/config/config.env
+/client/src/utils/config.js
 
 # testing
 /coverage
