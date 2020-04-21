@@ -5,7 +5,9 @@ import axios from 'axios';
 const initialState = {
 	transactions: [],
 	errors: null,
-	loading: true
+	loading: true,
+	isSignedIn: null,
+	userId: null
 };
 
 export const GlobalContext = createContext(initialState);
@@ -13,10 +15,25 @@ export const GlobalContext = createContext(initialState);
 export const GlobalProvider = ({ children }) => {
 	const [state, dispatch] = useReducer(AppReducer, initialState);
 
-	const getTransactions = async () => {
+	const signIn = (userId) => {
+		dispatch({
+			type: 'SIGN_IN',
+			payload: userId
+		});
+	}
+
+	const signOut = () => {
+		dispatch({ type: 'SIGN_OUT' });
+	}
+
+	const getTransactions = async (userId) => {
 		try {
 			// Proxy allows us to omit http://localhost:5000 from URL
-			const res = await axios.get('/api/v1/transactions');
+			const res = await axios.get('/api/v1/transactions', {
+				params: {
+					userId: userId
+				}
+			});
 
 			dispatch({
 				type: 'GET_TRANSACTIONS',
@@ -68,6 +85,29 @@ export const GlobalProvider = ({ children }) => {
 		}
 	}
 
+	const editTransaction = async (transaction) => {
+		const config = {
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		}
+
+		try {
+			await axios.put(`/api/v1/transactions/${transaction._id}`, transaction, config);
+
+			dispatch({
+				type: 'EDIT_TRANSACTION',
+				payload: transaction
+			});
+		} catch (error) {
+			console.log(error);
+			dispatch({
+				type: 'TRANSACTION_ERROR',
+				payload: error
+			});
+		}
+	}
+
 	return (
 	<GlobalContext.Provider
 		value=
@@ -75,9 +115,14 @@ export const GlobalProvider = ({ children }) => {
 				transactions: state.transactions,
 				error: state.error,
 				loading: state.loading,
+				isSignedIn: state.isSignedIn,
+				userId: state.userId,
+				signIn: signIn,
+				signOut: signOut,
 				getTransactions: getTransactions,
 				deleteTransaction: deleteTransaction,
-				addTransaction: addTransaction
+				addTransaction: addTransaction,
+				editTransaction: editTransaction
 			}}
 		>
 		{children}
