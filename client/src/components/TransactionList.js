@@ -3,10 +3,10 @@ import { GlobalContext } from '../context/GlobalState'
 import Transaction from './Transaction';
 
 const TransactionList = () => {
-	const { transactions, getTransactions } = useContext(GlobalContext);
+	const { userId, transactions, getTransactions } = useContext(GlobalContext);
 
 	useEffect(() => {
-		getTransactions();
+		getTransactions(userId);
 		//eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
