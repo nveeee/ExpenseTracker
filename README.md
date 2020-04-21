@@ -11,6 +11,24 @@ Custom `useWindowDimensions` hook allows conditional rendering based on window s
 )}
 ```
 
+Authentication through Google's Auth2 API
+
+```js
+// Reach out to Google API to retrieve login status on mount
+	useEffect(() => {
+		window.gapi.load('client:auth2', () => {
+			window.gapi.client.init({
+				clientId: GAPI_CLIENT_ID,
+				scope: 'email'
+			}).then(() => {
+				setAuth(window.gapi.auth2.getAuthInstance())
+				onAuthChange(window.gapi.auth2.getAuthInstance().isSignedIn.get());
+				window.gapi.auth2.getAuthInstance().isSignedIn.listen(onAuthChange);
+			})
+		})
+	}, []);
+```
+
 Context Hook provides dispatch functions only when needed
 
 ```js
