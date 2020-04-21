@@ -4,7 +4,7 @@ import { GlobalContext } from '../context/GlobalState'
 const AddTransaction = () => {
 	const [text, setText] = useState('');
 	const [amount, setAmount] = useState(0);
-	const { addTransaction } = useContext(GlobalContext);
+	const { addTransaction, userId } = useContext(GlobalContext);
 
 	const onSubmit = (e) => {
 		e.preventDefault();
@@ -13,7 +13,7 @@ const AddTransaction = () => {
 		if (!text) return;
 
 		const newTransaction = {
-			id: Math.floor(Math.random() * 10000000),
+			userId: userId,
 			text: text,
 			amount: +amount
 		};
@@ -48,6 +48,7 @@ const AddTransaction = () => {
 									type="number"
 									id="amount"
 									value={amount}
+									step="0.01"
 									onChange={(e) => setAmount(e.target.value)}
 									placeholder="Enter amount..."
 								/>
@@ -56,7 +57,7 @@ const AddTransaction = () => {
 						</div>
 						
 					</div>
-					<button className={`ui teal ${!text ? 'disabled' : '' } labeled icon button`}>
+					<button type="submit" className={`ui teal ${!text ? 'disabled' : '' } labeled icon button`}>
 							<i className="plus square outline icon"></i>
 							Add Transaction
 						</button>
