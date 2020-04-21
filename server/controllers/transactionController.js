@@ -3,7 +3,7 @@ const Transaction = require('../models/Transaction');
 // GET /api/v1/transactions
 exports.getTransactions = async (req, res, next) => {
 	try {
-		const transactions = await Transaction.find();
+		const transactions = await Transaction.find({ userId: req.query.userId });
 
 		return res.status(200).json({
 			success: true,
@@ -20,8 +20,6 @@ exports.getTransactions = async (req, res, next) => {
 
 // POST /api/v1/transactions
 exports.addTransaction = async (req, res, next) => {
-	const { text, amount } = req.body;
-
 	try {
 		const transaction = await Transaction.create(req.body);
 
@@ -61,6 +59,32 @@ exports.deleteTransaction = async (req, res, next) => {
 		}
 
 		await transaction.remove();
+
+		return res.status(200).json({
+			success: true,
+			data: {}
+		});
+	} catch (error) {
+		return res.status(500).json({
+			success: false,
+			error: 'Server Error'
+		});
+	}
+};
+
+// PUT /api/v1/transactions/:id
+exports.editTransaction = async (req, res, next) => {
+	try {
+		const transaction = await Transaction.findById(req.params.id);
+
+		if (!transaction) {
+			return res.status(404).json({
+				success: false,
+				error: 'No transaction found'
+			});
+		}
+
+		await transaction.updateOne(req.body);
 
 		return res.status(200).json({
 			success: true,
